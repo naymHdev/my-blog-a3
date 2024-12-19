@@ -51,7 +51,7 @@ const loginUserFromDB = async (payload: TLoginUser) => {
     refreshToken,
   };
 
-  // ------ END ------
+  // ------ END Login ------
 };
 
 const findSingleUserFromDB = async (id: string) => {
