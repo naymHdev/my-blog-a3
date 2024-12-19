@@ -13,6 +13,12 @@ export interface TUser {
   isBlocked: boolean;
 }
 
+export interface NewUser {
+  id: string;
+  password: string;
+  role: string;
+}
+
 export type TLoginUser = {
   email: string;
   password: string;

@@ -55,7 +55,7 @@ UserSchema.post('save', function (doc, next) {
 });
 
 UserSchema.statics.isUserExistsByCustomEmail = async function (email: string) {
-  return AuthModel.findOne({ email }).select('password');
+  return await User.findOne({ email }).select('+password');
 };
 
 UserSchema.statics.isUserPasswordMatch = async function (
@@ -65,4 +65,4 @@ UserSchema.statics.isUserPasswordMatch = async function (
   return await bcrypt.compare(plainTextPass, hasPass);
 };
 
-export const AuthModel = model<TUser, UserModel>('User', UserSchema);
+export const User = model<TUser, UserModel>('User', UserSchema);

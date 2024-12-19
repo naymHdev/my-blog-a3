@@ -5,11 +5,12 @@ import AppError from '../errors/appError';
 import { StatusCodes } from 'http-status-codes';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
-import { AuthModel } from '../modules/auth/auth.model';
+import { User } from '../modules/auth/auth.model';
 
 export const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
+
     if (!token) {
       throw new AppError(
         StatusCodes.UNAUTHORIZED,
@@ -27,7 +28,9 @@ export const auth = (...requiredRoles: TUserRole[]) => {
 
     const { role, userEmail } = decoded;
 
-    const user = await AuthModel.isUserExistsByCustomEmail(userEmail);
+    const user = await User.isUserExistsByCustomEmail(userEmail);
+
+    // console.log('user-token-->', user);
 
     // Check user exist or no!
     if (!user) {
