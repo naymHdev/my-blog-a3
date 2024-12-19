@@ -12,10 +12,14 @@ const blogSchema = new Schema<TBlog>({
     required: true,
     trim: true,
   },
-  user: {
+  author: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+  },
+  isPublished: {
+    type: Boolean,
+    default: true,
   },
 });
 
