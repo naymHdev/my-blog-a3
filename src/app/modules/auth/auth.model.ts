@@ -1,10 +1,10 @@
 import { model, Schema } from 'mongoose';
-import { TUser } from './auth.interface';
+import { TUser, UserModel } from './auth.interface';
 import config from '../../config';
 import bcrypt from 'bcrypt';
 import { Role } from './auth.constant';
 
-const UserSchema = new Schema<TUser>(
+const UserSchema = new Schema<TUser, UserModel>(
   {
     name: {
       type: String,
@@ -54,4 +54,15 @@ UserSchema.post('save', function (doc, next) {
   next();
 });
 
-export const AuthModel = model<TUser>('User', UserSchema);
+UserSchema.statics.isUserExistsByCustomEmail = async function (email: string) {
+  return AuthModel.findOne({ email }).select('password');
+};
+
+UserSchema.statics.isUserPasswordMatch = async function (
+  plainTextPass,
+  hasPass,
+) {
+  return await bcrypt.compare(plainTextPass, hasPass);
+};
+
+export const AuthModel = model<TUser, UserModel>('User', UserSchema);

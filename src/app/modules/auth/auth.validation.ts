@@ -20,6 +20,14 @@ const UserSchemaValidation = z.object({
   isBlocked: z.boolean().default(false),
 });
 
+const loginValidationSchema = z.object({
+  body: z.object({
+    email: z.string({ required_error: 'Email is required.' }),
+    password: z.string({ required_error: 'Password is required' }),
+  }),
+});
+
 export const AuthValidations = {
   UserSchemaValidation,
+  loginValidationSchema,
 };
