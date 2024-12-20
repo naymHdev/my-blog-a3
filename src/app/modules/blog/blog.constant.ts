@@ -1,7 +1,1 @@
-export const BlogSearchableFields = [
-  'title',
-  'content',
-  'author',
-  'createdAt',
-  'updatedAt',
-];
+export const BlogSearchableFields = ['title', 'content', 'author._id'];

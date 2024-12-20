@@ -27,6 +27,13 @@ const blockUser = catchAsync(async (req, res) => {
 const deleteBlog = catchAsync(async (req, res) => {
   const { id } = req.params;
 
+  if (req.user?.role !== 'admin') {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'Access denied! Only admin can deleted blog!',
+    );
+  }
+
   const result = await AdminServices.deleteBlogFromDB(id);
 
   sendResponse(res, {

@@ -10,7 +10,7 @@ class QueryBuilder<T> {
   }
 
   // Searching
-  search(searchAbleFields: string[]) {
+  searching(searchAbleFields: string[]) {
     const search = this.query?.search as string;
     if (search) {
       this.modelQuery = this.modelQuery.find({
@@ -29,9 +29,9 @@ class QueryBuilder<T> {
   }
 
   // Filtering
-  filter() {
+  filtering() {
     const queryObj = { ...this.query }; // copy of query object
-    const excludedFields = ['search', 'page', 'limit', 'sort', 'fields'];
+    const excludedFields = ['searching', 'sorting'];
 
     excludedFields.forEach((field) => delete queryObj[field]);
 
@@ -57,30 +57,10 @@ class QueryBuilder<T> {
   }
 
   // Sorting
-  sort() {
+  sorting() {
     const sort =
       (this?.query?.sort as string)?.split(',')?.join(' ') || '-createdAt';
     this.modelQuery = this.modelQuery.sort(sort as string);
-
-    return this;
-  }
-
-  // Pagination
-  paginate() {
-    const page = Number(this?.query?.page) || 1;
-    const limit = Number(this?.query?.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    this.modelQuery = this?.modelQuery.skip(skip).limit(limit);
-
-    return this;
-  }
-
-  // Fields
-  fields() {
-    const fields =
-      (this?.query?.fields as string)?.split(',')?.join(' ') || '-__v';
-    this.modelQuery = this.modelQuery.select(fields);
 
     return this;
   }

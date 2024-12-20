@@ -1,4 +1,3 @@
-import QueryBuilder from '../../builder/QueryBuilder';
 import { BlogSearchableFields } from './blog.constant';
 import { TBlog } from './blog.interface';
 import { BlogModel } from './blog.model';
@@ -9,21 +8,38 @@ const createBlogIntoDB = async (payload: TBlog) => {
 };
 
 const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
-  const blogQuery = new QueryBuilder(
-    BlogModel.find().populate({
-      path: 'author',
-      select: 'name',
-    }),
-    query,
-  )
-    .search(BlogSearchableFields)
-    .filter()
-    .sort()
-    .paginate()
-    .fields();
+  const queryObj = { ...query };
 
-  const result = await blogQuery.modelQuery.exec();
-  return result;
+  let search = '';
+  if (query?.search) {
+    search = query?.search as string;
+  }
+
+  // Searching
+  const searchQuery = BlogModel.find({
+    $or: BlogSearchableFields.map((field) => ({
+      [field]: { $regex: search, $options: 'i' },
+    })),
+  });
+
+  // Filtering
+  const excludedFields = ['search', 'sortBy'];
+
+  excludedFields.forEach((el) => delete queryObj[el]);
+
+  const filterQuery = searchQuery.find(queryObj).populate({
+    path: 'author',
+    select: 'name',
+  });
+
+  let sortBy = '-createdAt';
+  if (query?.sortBy) {
+    sortBy = query?.sortBy as string;
+  }
+
+  const sortQuery = await filterQuery.sort(sortBy);
+
+  return sortQuery;
 };
 
 const updateBlogFromDB = async (id: string, payload: Partial<TBlog>) => {
