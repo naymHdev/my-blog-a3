@@ -53,8 +53,7 @@ const updateBlogFromDB = async (id: string, payload: Partial<TBlog>) => {
 };
 
 const deleteBlogFromDB = async (id: string) => {
-  const deleteBlog = await BlogModel.findByIdAndDelete(id);
-  return deleteBlog;
+  await BlogModel.findByIdAndDelete(id);
 };
 
 export const BlogServices = {
