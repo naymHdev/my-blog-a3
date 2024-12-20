@@ -22,7 +22,7 @@ const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await blogQuery.modelQuery;
+  const result = await blogQuery.modelQuery.exec();
   return result;
 };
 
