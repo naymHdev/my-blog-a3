@@ -5,7 +5,7 @@ import { BlogServices } from './blog.service';
 
 // create
 const createBlog = catchAsync(async (req, res) => {
-  const result = (await BlogServices.createBlogIntoDB(req.body))
+  const result = await BlogServices.createBlogIntoDB(req.body);
 
   sendResponse(res, {
     success: true,
@@ -19,11 +19,13 @@ const createBlog = catchAsync(async (req, res) => {
 const getAllBlogs = catchAsync(async (req, res) => {
   // console.log('query---->', req.query);
 
-  const result = await BlogServices.getAllBlogsFromDB(req.query);
+  const result = await BlogServices.getAllBlogsFromDB(
+    req.query as Record<string, unknown>,
+  );
 
   sendResponse(res, {
     success: true,
-    message: 'All Blogs fetched successfully',
+    message: 'Blogs fetched successfully',
     statusCode: StatusCodes.OK,
     data: result,
   });

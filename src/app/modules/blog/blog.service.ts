@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import mongoose from 'mongoose';
 import { BlogSearchableFields } from './blog.constant';
-import { TBlog } from './blog.interface';
+import { BlogQueryParams, TBlog } from './blog.interface';
 import { BlogModel } from './blog.model';
 
 const createBlogIntoDB = async (payload: TBlog) => {
@@ -7,35 +10,33 @@ const createBlogIntoDB = async (payload: TBlog) => {
   return result.populate('author');
 };
 
-const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
-  const queryObj = { ...query };
+const getAllBlogsFromDB = async (query: BlogQueryParams) => {
+  const { search, sortBy = 'createdAt', sortOrder = 'desc', filter } = query;
 
-  let search = '';
-  if (query?.search) {
-    search = query?.search as string;
-  }
+  // console.log('query', query);
 
-  // Searching
-  const searchQuery = BlogModel.find({
-    $or: BlogSearchableFields.map((field) => ({
-      [field]: { $regex: search, $options: 'i' },
-    })),
-  });
+  const searchCriteria: any = search
+    ? {
+        $or: BlogSearchableFields.map((field) => ({
+          [field]: { $regex: search, $options: 'i' },
+        })),
+      }
+    : {};
 
-  // Filtering
-  const excludedFields = ['search', 'sortBy'];
-  excludedFields.forEach((el) => delete queryObj[el]);
+  const filterCriteria: any = filter
+    ? { author: new mongoose.Types.ObjectId(filter) }
+    : {};
 
-  const filterQuery = searchQuery.find(queryObj).populate('author');
+  const sortCriteria: any = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
-  // Shorting
-  let sortBy = '-createdAt';
-  if (query?.sortBy) {
-    sortBy = query?.sortBy as string;
-  }
+  const blogsQuery = await BlogModel.find({
+    ...searchCriteria,
+    ...filterCriteria,
+  })
+    .sort(sortCriteria)
+    .populate('author');
 
-  const sortQuery = await filterQuery.sort(sortBy);
-  return sortQuery;
+  return blogsQuery;
 };
 
 const updateBlogFromDB = async (id: string, payload: Partial<TBlog>) => {
