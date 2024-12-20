@@ -2,7 +2,6 @@ import express from 'express';
 import { AuthUserController } from './auth.controller';
 import { validateRequest } from '../../middlewares/validateRequest';
 import { AuthValidations } from './auth.validation';
-import { auth } from '../../middlewares/auth';
 
 const route = express.Router();
 
@@ -19,6 +18,6 @@ route.post(
 );
 
 route.get('/:id', AuthUserController.findSingleUser);
-route.get('/', auth('user'), AuthUserController.findAllUser);
+route.get('/', AuthUserController.findAllUser);
 
 export const AuthRoutes = route;

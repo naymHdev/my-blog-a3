@@ -26,10 +26,7 @@ const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
   const excludedFields = ['search', 'sortBy'];
   excludedFields.forEach((el) => delete queryObj[el]);
 
-  const filterQuery = searchQuery.find(queryObj).populate({
-    path: 'author',
-    select: 'name',
-  });
+  const filterQuery = searchQuery.find(queryObj).populate('author');
 
   // Shorting
   let sortBy = '-createdAt';
