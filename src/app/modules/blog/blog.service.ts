@@ -13,8 +13,6 @@ const createBlogIntoDB = async (payload: TBlog) => {
 const getAllBlogsFromDB = async (query: BlogQueryParams) => {
   const { search, sortBy = 'createdAt', sortOrder = 'desc', filter } = query;
 
-  // console.log('query', query);
-
   const searchCriteria: any = search
     ? {
         $or: BlogSearchableFields.map((field) => ({
