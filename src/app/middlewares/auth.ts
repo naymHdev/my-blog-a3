@@ -9,7 +9,7 @@ import { User } from '../modules/auth/auth.model';
 
 export const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
       throw new AppError(
@@ -23,8 +23,6 @@ export const auth = (...requiredRoles: TUserRole[]) => {
       token,
       config.jwt_access_secret_token as string,
     ) as JwtPayload;
-
-    // console.log('decode-->', decoded);
 
     const { role, userEmail } = decoded;
 

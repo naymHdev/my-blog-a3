@@ -4,7 +4,7 @@ import { BlogModel } from './blog.model';
 
 const createBlogIntoDB = async (payload: TBlog) => {
   const result = await BlogModel.create(payload);
-  return result;
+  return result.populate('author');
 };
 
 const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
@@ -24,7 +24,6 @@ const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
 
   // Filtering
   const excludedFields = ['search', 'sortBy'];
-
   excludedFields.forEach((el) => delete queryObj[el]);
 
   const filterQuery = searchQuery.find(queryObj).populate({
@@ -32,13 +31,13 @@ const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
     select: 'name',
   });
 
+  // Shorting
   let sortBy = '-createdAt';
   if (query?.sortBy) {
     sortBy = query?.sortBy as string;
   }
 
   const sortQuery = await filterQuery.sort(sortBy);
-
   return sortQuery;
 };
 
@@ -54,7 +53,7 @@ const updateBlogFromDB = async (id: string, payload: Partial<TBlog>) => {
     },
   );
 
-  return updateBlog;
+  return updateBlog.populate('author');
 };
 
 const deleteBlogFromDB = async (id: string) => {

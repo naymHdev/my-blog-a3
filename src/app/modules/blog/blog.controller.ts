@@ -5,7 +5,7 @@ import { BlogServices } from './blog.service';
 
 // create
 const createBlog = catchAsync(async (req, res) => {
-  const result = await BlogServices.createBlogIntoDB(req.body);
+  const result = (await BlogServices.createBlogIntoDB(req.body))
 
   sendResponse(res, {
     success: true,

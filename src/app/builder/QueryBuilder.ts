@@ -1,4 +1,4 @@
-import { FilterQuery, Query, Types } from 'mongoose';
+import { FilterQuery, Query } from 'mongoose';
 
 class QueryBuilder<T> {
   public modelQuery: Query<T[], T>;
@@ -31,25 +31,9 @@ class QueryBuilder<T> {
   // Filtering
   filtering() {
     const queryObj = { ...this.query }; // copy of query object
-    const excludedFields = ['searching', 'sorting'];
+    const excludedFields = ['search', 'sortBy'];
 
     excludedFields.forEach((field) => delete queryObj[field]);
-
-    if (queryObj?.author) {
-      queryObj.user = new Types.ObjectId(queryObj.author as string);
-    }
-
-    if (queryObj?.createdAt) {
-      queryObj.createdAt = {
-        $gte: new Date(queryObj.createdAt as string),
-      };
-    }
-
-    if (queryObj?.updatedAt) {
-      queryObj.updatedAt = {
-        $gte: new Date(queryObj.updatedAt as string),
-      };
-    }
 
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
 
