@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { AuthServices } from './auth.service';
+import AppError from '../../errors/appError';
 
 const registerUser = catchAsync(async (req, res) => {
   const result = await AuthServices.registerUserIntoDB(req.body);
@@ -39,6 +40,10 @@ const findSingleUser = catchAsync(async (req, res) => {
 });
 
 const findAllUser = catchAsync(async (req, res) => {
+  if (req.user?.role !== 'admin') {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'User not fetching all users');
+  }
+
   const result = await AuthServices.findAllUserFromDB();
 
   sendResponse(res, {
