@@ -58,6 +58,9 @@ const findSingleUserFromDB = async (id: string) => {
 
 const findAllUserFromDB = async () => {
   const result = await User.find();
+
+  // console.log('result', result);
+
   return result;
 };
 
