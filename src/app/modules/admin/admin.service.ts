@@ -10,6 +10,10 @@ const blockUserFromDB = async (userId: string) => {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
 
+  if (user && user.role === 'admin') {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Admin Do not Blocking admin!');
+  }
+
   if (user.isBlocked) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'User is already blocked');
   }
