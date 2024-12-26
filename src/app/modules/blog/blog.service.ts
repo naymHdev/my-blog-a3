@@ -42,19 +42,34 @@ const getAllBlogsFromDB = async (query: BlogQueryParams) => {
   return blogsQuery;
 };
 
-const updateBlogFromDB = async (id: string, payload: Partial<TBlog>) => {
-  const updateBlog = await BlogModel.findByIdAndUpdate(
-    id,
-    {
-      $set: payload,
-    },
-    {
-      new: true,
-      runValidators: true,
-    },
-  );
+const updateBlogFromDB = async (
+  userId: string,
+  id: string,
+  payload: Partial<TBlog>,
+) => {
+  const blog = await BlogModel.findById(id).populate('author');
+  if (!blog) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Blog not found!');
+  }
 
-  return updateBlog.populate('author');
+  const blogAuthorId = blog.author?._id;
+
+  if (blogAuthorId && blogAuthorId.toString() == userId) {
+    const updateBlog = await BlogModel.findByIdAndUpdate(
+      id,
+      {
+        $set: payload,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    return updateBlog.populate('author');
+  } else {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'You did not updated the blog');
+  }
 };
 
 const deleteBlogFromDB = async (userId: string, id: string) => {
