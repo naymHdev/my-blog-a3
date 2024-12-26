@@ -13,7 +13,6 @@ const registerUserIntoDB = async (payload: TUser) => {
 const loginUserFromDB = async (payload: TLoginUser) => {
   const user = await User.isUserExistsByCustomEmail(payload.email);
 
-  // console.log('user--', user);
 
   // Check user exist or no!
   if (!user) {
@@ -38,14 +37,14 @@ const loginUserFromDB = async (payload: TLoginUser) => {
 
   // console.log('jwtPayload', jwtPayload);
 
-  const accessToken = createToken(
+  const token = createToken(
     jwtPayload,
     config.jwt_access_secret_token as string,
     config.jwt_access_expire_in as string,
   );
 
   return {
-    accessToken,
+    token,
   };
 
   // ------ END Login ------

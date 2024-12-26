@@ -10,57 +10,57 @@ import handleCastError from '../errors/handleCastError';
 import { handleDuplicateError } from '../errors/handleDuplicateError';
 import AppError from '../errors/appError';
 
-const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
+const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Setting up default values
   let statusCode: number = 500;
   let message: string = 'Something went wrong';
 
-  let errorSources: TErrorSources = [
+  let error: TErrorSources = [
     {
       path: '',
       message: 'Something went wrong',
     },
   ];
 
-  if (error instanceof ZodError) {
-    const simplifiedError = handleZodError(error);
+  if (err instanceof ZodError) {
+    const simplifiedError = handleZodError(err);
 
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-    errorSources = simplifiedError.errorSources;
-  } else if (error?.name === 'ValidationError') {
-    const simplifiedError = handleValidationError(error);
+    error = simplifiedError.errorSources;
+  } else if (err?.name === 'ValidationError') {
+    const simplifiedError = handleValidationError(err);
 
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-    errorSources = simplifiedError.errorSources;
-  } else if (error?.name === 'CastError') {
-    const simplifiedError = handleCastError(error);
+    error = simplifiedError.errorSources;
+  } else if (err?.name === 'CastError') {
+    const simplifiedError = handleCastError(err);
 
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-    errorSources = simplifiedError.errorSources;
-  } else if (error?.code === 11000) {
-    const simplifiedError = handleDuplicateError(error);
+    error = simplifiedError.errorSources;
+  } else if (err?.code === 11000) {
+    const simplifiedError = handleDuplicateError(err);
 
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-    errorSources = simplifiedError.errorSources;
-  } else if (error instanceof AppError) {
-    statusCode = error.statusCode;
-    message = error.message;
-    errorSources = [
+    error = simplifiedError.errorSources;
+  } else if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message;
+    error = [
       {
         path: '',
-        message: error.message,
+        message: err.message,
       },
     ];
-  } else if (error instanceof Error) {
-    message = error.message;
-    errorSources = [
+  } else if (err instanceof Error) {
+    message = err.message;
+    error = [
       {
         path: '',
-        message: error.message,
+        message: err.message,
       },
     ];
   }
@@ -69,9 +69,8 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   res.status(statusCode).json({
     success: false,
     message,
-    errorSources,
     error,
-    stack: error.stack,
+    stack: err.stack,
   });
 };
 

@@ -28,8 +28,6 @@ export const auth = (...requiredRoles: TUserRole[]) => {
 
     const user = await User.isUserExistsByCustomEmail(userEmail);
 
-    // console.log('user-token-->', user);
-
     // Check user exist or no!
     if (!user) {
       throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
@@ -47,7 +45,11 @@ export const auth = (...requiredRoles: TUserRole[]) => {
       );
     }
 
-    req.user = decoded as JwtPayload;
+    req.user = {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+    } as JwtPayload;
     next();
 
     // ---------- END --------- //

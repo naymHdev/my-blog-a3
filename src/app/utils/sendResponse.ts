@@ -8,9 +8,15 @@ interface IResponse<T> {
 }
 
 export const sendResponse = <T>(res: Response, data: IResponse<T>) => {
-  res.status(data?.statusCode).json({
+  const response: Partial<IResponse<T>> = {
     success: data.success,
     message: data.message,
-    data: data.data,
-  });
+    statusCode: data.statusCode,
+  };
+
+  if (data.data !== undefined && data.data !== null) {
+    response.data = data.data;
+  }
+
+  res.status(data?.statusCode).json(response);
 };

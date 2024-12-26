@@ -20,8 +20,6 @@ const blockUserFromDB = async (userId: string) => {
 
   user.isBlocked = true;
   await user.save();
-
-  return user;
 };
 
 const deleteBlogFromDB = async (id: string) => {
@@ -30,8 +28,6 @@ const deleteBlogFromDB = async (id: string) => {
   if (!blog) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Blog not found to delete it!');
   }
-
-  return blog;
 };
 
 export const AdminServices = {

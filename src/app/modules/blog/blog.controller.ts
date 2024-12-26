@@ -5,7 +5,9 @@ import { BlogServices } from './blog.service';
 
 // create
 const createBlog = catchAsync(async (req, res) => {
-  const result = await BlogServices.createBlogIntoDB(req.body);
+  const user = req.user;
+
+  const result = await BlogServices.createBlogIntoDB(user, req.body);
 
   sendResponse(res, {
     success: true,
@@ -43,7 +45,9 @@ const updateBlog = catchAsync(async (req, res) => {
 
 // delete
 const deleteBlog = catchAsync(async (req, res) => {
-  await BlogServices.deleteBlogFromDB(req.params.id);
+  const userId = req.user._id as string;
+
+  await BlogServices.deleteBlogFromDB(userId, req.params.id);
 
   sendResponse(res, {
     success: true,
